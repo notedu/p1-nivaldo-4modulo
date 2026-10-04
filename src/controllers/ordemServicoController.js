@@ -39,6 +39,28 @@ module.exports = class OrdemServicoController {
         }
     }
 
+    static async update(req, res) {
+        try {
+            const ordemServico = await OrdemServico.findByPk(req.params.id)
+            if (!ordemServico) {
+                return res.status(404).json({ message: 'Ordem de Serviço não encontrada' })
+            }
+
+            const campos = ['nome_cliente', 'nome_funcionario', 'servico', 'valor_servico', 'status']
+            const dados = {}
+            for (const campo of campos) {
+                if (req.body[campo] !== undefined) {
+                    dados[campo] = req.body[campo]
+                }
+            }
+
+            await ordemServico.update(dados)
+            return res.status(200).json({ message: 'Ordem de Serviço atualizada com sucesso', ordemServico })
+        } catch (error) {
+            return res.status(500).json({ message: 'Não foi possível atualizar a Ordem de Serviço' })
+        }
+    }
+
     static async remove(req, res) {
         try {
             const ordemServico = await OrdemServico.findByPk(req.params.id)
